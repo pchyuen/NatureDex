@@ -42,6 +42,12 @@ def load_naturedex():
         class_names = [line.strip() for line in f.readlines()]
     return model, class_names
 
+try:
+    model, class_names = load_naturedex()
+    st.sidebar.success("NatureDex Brain: Online")
+except Exception as e:
+    st.error(f"Error loading model: {e}")
+
 # ===================================
 # Image upload
 # ===================================
@@ -73,4 +79,5 @@ if uploaded_file is not None:
     st.header(f"Result: {result_class.capitalize()}")
     st.progress(int(confidence))
     st.info(f"Confidence Score: {confidence:.2f}%")
+
 
