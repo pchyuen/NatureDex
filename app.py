@@ -8,7 +8,7 @@ from PIL import Image
 # ===================================
 st.set_page_config(page_title="NatureDex: Animal Identification", page_icon="🐾")
 st.title("NatureDex")
-st.markdown("Identify species using the optimized **EfficientNetB0** model.")
+st.markdown("Identify whether or not it's one of these 10 animals! cat, dog, butterfly, spider, cow, squirrel, chicken, elephant, sheep, horse")
 
 # ===================================
 # Load model
@@ -27,7 +27,7 @@ def load_naturedex():
     model = tf.keras.Sequential([
         base_model,
         tf.keras.layers.GlobalAveragePooling2D(),
-        tf.keras.layers.Dropout(0.255), # Your optimal dropout from Optuna
+        tf.keras.layers.Dropout(0.255), # best dropout from Optuna
         tf.keras.layers.Dense(10, activation='softmax')
     ])
     
@@ -42,12 +42,6 @@ def load_naturedex():
         class_names = [line.strip() for line in f.readlines()]
     return model, class_names
 
-try:
-    model, class_names = load_naturedex()
-    st.sidebar.success("NatureDex Brain: Online")
-except Exception as e:
-    st.error(f"Error loading model: {e}")
-
 # ===================================
 # Image upload
 # ===================================
@@ -57,7 +51,7 @@ if uploaded_file is not None:
     image = Image.open(uploaded_file)
     st.image(image, caption='Uploaded Image', use_column_width=True)
     
-    st.write("🔍 Analyzing...")
+    st.write("Analysing...")
     
     # Preprocessing
     img = image.convert('RGB').resize((150, 150))
@@ -68,8 +62,6 @@ if uploaded_file is not None:
     # Prediction handling
     # ===================================
     predictions = model.predict(img_array)
-    
-    # Handle the probability output
     probs = tf.nn.softmax(predictions[0])
     result_index = np.argmax(probs)
     result_class = class_names[result_index]
@@ -80,4 +72,5 @@ if uploaded_file is not None:
     # ===================================
     st.header(f"Result: {result_class.capitalize()}")
     st.progress(int(confidence))
-    st.info(f"AI Confidence Score: {confidence:.2f}%")
+    st.info(f"Confidence Score: {confidence:.2f}%")
+
