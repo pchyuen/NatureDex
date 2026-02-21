@@ -8,14 +8,35 @@ from PIL import Image
 # ===================================
 st.set_page_config(page_title="NatureDex: Animal Identification", page_icon="🐾")
 st.title("NatureDex")
-st.markdown("Upload a photo to identify the species (butterfly, cat, dog, chicken, cow, elephant, horse, sheep, spider, squirrel).")
+st.markdown("Identify species using the optimized **EfficientNetB0** model.")
 
 # ===================================
 # Load model
 # ===================================
 @st.cache_resource
 def load_naturedex():
-    model = tf.keras.models.load_model('naturedex_best_model.keras', compile=False)
+    # rebuilds the exact architecture from training to avoid loading errors
+    # will load the custom weights in the next step
+    base_model = tf.keras.applications.EfficientNetB0(
+        input_shape=(150, 150, 3), 
+        include_top=False, 
+        weights=None
+    )
+    
+    # custom layers
+    model = tf.keras.Sequential([
+        base_model,
+        tf.keras.layers.GlobalAveragePooling2D(),
+        tf.keras.layers.Dropout(0.255), # Your optimal dropout from Optuna
+        tf.keras.layers.Dense(10, activation='softmax')
+    ])
+    
+    # weights from your saved file
+    try:
+        model.load_weights('naturedex_best_model.keras')
+    except:
+        temp_model = tf.keras.models.load_model('naturedex_best_model.keras', compile=False)
+        model.set_weights(temp_model.get_weights())
     
     with open('class_names.txt', 'r') as f:
         class_names = [line.strip() for line in f.readlines()]
@@ -47,8 +68,8 @@ if uploaded_file is not None:
     # Prediction handling
     # ===================================
     predictions = model.predict(img_array)
-    if isinstance(predictions, list):
-        predictions = predictions[0]
+    
+    # Handle the probability output
     probs = tf.nn.softmax(predictions[0])
     result_index = np.argmax(probs)
     result_class = class_names[result_index]
