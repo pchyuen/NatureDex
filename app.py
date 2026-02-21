@@ -17,13 +17,17 @@ st.markdown("""
         border-radius: 15px;
         border-left: 8px solid #2E7D32;
         box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+        color: #000000;
+    }
+    .ranger-card h3, .ranger-card p, .ranger-card b {
+        color: #000000 !important;
     }
     h1 { color: #1B5E20; text-align: center; }
     .stProgress > div > div > div > div { background-color: #2E7D32; }
     </style>
     """, unsafe_allow_html=True)
 
-st.title("NatureDex")
+st.title("🐾 NatureDex")
 st.markdown("<h4 style='text-align: center; color: #666;'>Field Guide and Species Identification!!</h4>", unsafe_allow_html=True)
 st.divider()
 
@@ -128,3 +132,4 @@ if uploaded_file is not None:
 
 st.divider()
 st.caption("NatureDex | A DLOR project 2026")
+
