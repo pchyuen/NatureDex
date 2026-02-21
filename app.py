@@ -126,10 +126,11 @@ if uploaded_file is not None:
                     <p><b>Natural Habitat:</b> {card['habitat']}</p>
                     <p><b>Primary Diet:</b> {card['diet']}</p>
                     <hr>
-                    <p><b>Did you know?</b> {card['fact']}</p>
+                    <p><b>💡 Did you know?</b> {card['fact']}</p>
                 </div>
                 """, unsafe_allow_html=True)
 
 st.divider()
 st.caption("NatureDex | A DLOR project 2026")
+
 
